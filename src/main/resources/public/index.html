@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #map {
+            height: 900px;
+            width: 100%;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+</head>
+<body>
+<h3>My Google Maps Demo</h3>
+<div id="map"></div>
+<script>
+
+    var map;
+
+    var markers = {};
+
+    var lines = [];
+
+    function initMap() {
+        var uluru = {lat: 34.052235, lng: -118.243683};
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 10,
+            center: uluru
+        });
+
+    }
+
+    window.setInterval(function () {
+        var lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+        };
+        $.get('/v1/vehicles' + location.search, function (data) {
+            data.forEach(function (d) {
+                var key = d.run;
+
+                if (!markers[key]) {
+                    markers[key] = new google.maps.Marker({
+                        position: {lat: d.currentLat, lng: d.currentLon},
+                        map: map,
+                        title: 'line: ' + d.line + ', run no.: ' + d.run
+                    });
+                } else {
+                    markers[key].setPosition({lat: d.currentLat, lng: d.currentLon})
+                }
+
+                lines.push(new google.maps.Polyline({
+                    path: [{lat: d.lastLat, lng: d.lastLon}, {lat: d.currentLat, lng: d.currentLon}],
+                    icons: [{
+                        icon: lineSymbol,
+                        offset: '100%'
+                    }],
+                    strokeOpacity: 0.6,
+                    map: map
+                }));
+
+            })
+        });
+    }, 10000);
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9744zWiZyCgNiDtZWNXP8hUleEgwdLFs&callback=initMap">
+</script>
+</body>
+</html>
