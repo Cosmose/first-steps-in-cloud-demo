@@ -8,6 +8,7 @@ Displays Los Angeles on Google Maps and visualize public transport vehicles in r
 
 ## How to run locally
 ### Prerequisites
+* Heroku CLI
 * Java 8
 * Maven 3.x
 
